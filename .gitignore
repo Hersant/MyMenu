@@ -1,5 +1,20 @@
-.idea
-..*
-.git
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Mac
 .DS_Store
-target/gen*
+
+# Maven
+log/
+target/
+
+# Gradle
+.gradle
+/build
