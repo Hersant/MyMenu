@@ -1,29 +1,26 @@
 package com.bse.restaurant;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
+
+import static java.nio.file.StandardOpenOption.APPEND;
 
 public class Order {
     private int nbMenu;
     private int nbSide;
     private int nbDrink;
 
+    public static final String CSV_FILE_NAME = "src/main/resources/csv/order.csv";
+
     public Order() {
         this.nbMenu = -1;
         this.nbSide = -1;
         this.nbDrink = -1;
-    }
-
-    public int getNbMenu() {
-        return nbMenu;
-    }
-
-    public int getNbSide() {
-        return nbSide;
-    }
-
-    public int getNbDrink() {
-        return nbDrink;
     }
 
     /**
@@ -192,5 +189,44 @@ public class Order {
             System.out.println("Vous devez choisir un entier compris entre 0 et 3 !");
         }
         return nbDrink;
+    }
+
+    /**
+     * Run order and save it in a CSV file
+     */
+    public void orderFood() {
+        runMenu();
+        runSide();
+        runDrink();
+
+        // Save the order in a CSV file
+        Path path = Paths.get(CSV_FILE_NAME);
+        try {
+            Files.write(path, String.format(this.nbMenu + "," + this.nbSide + "," + this.nbDrink + "%n").getBytes(), APPEND);
+        } catch (IOException e) {
+            System.out.println("Une erreur s'est produite. Vérifier si le chemin vers le fichier est correct.\t" + e);
+        }
+        System.out.println("\nVotre commande a bien été renvoyée en cuisine.");
+    }
+
+    /**
+     * Read orders from a CSV file
+     */
+    public void getOrderFromCSV() {
+        Path pathToOrders = Paths.get(CSV_FILE_NAME);
+        List<String> orders = null;
+
+        try {
+            orders = Files.readAllLines(pathToOrders);
+        } catch (IOException e) {
+            System.out.println("Une erreur s'est produite. Vérifier si le chemin vers le fichier est correct.\t" + e);
+            return;
+        }
+
+        System.out.println("Commandes enregistrées : ");
+
+        for (int i = 1; i < orders.size(); i++) {
+            System.out.println(orders.get(i));
+        }
     }
 }
